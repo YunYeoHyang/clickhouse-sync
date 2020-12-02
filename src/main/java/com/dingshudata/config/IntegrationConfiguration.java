@@ -19,7 +19,9 @@ import org.springframework.integration.dsl.MessageChannels;
 import org.springframework.integration.dsl.Pollers;
 import org.springframework.integration.file.FileReadingMessageSource;
 import org.springframework.integration.file.dsl.Files;
+import org.springframework.integration.file.filters.CompositeFileListFilter;
 import org.springframework.integration.file.filters.FileSystemPersistentAcceptOnceFileListFilter;
+import org.springframework.integration.file.filters.RegexPatternFileListFilter;
 import org.springframework.integration.handler.LoggingHandler;
 import org.springframework.integration.metadata.PropertiesPersistingMetadataStore;
 import org.springframework.messaging.MessageChannel;
@@ -27,6 +29,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.io.File;
+import java.util.Arrays;
 
 @Configuration
 @EnableScheduling
@@ -71,6 +74,11 @@ public class IntegrationConfiguration {
                         .useWatchService(true)
                         .watchEvents(FileReadingMessageSource.WatchEventType.CREATE, FileReadingMessageSource.WatchEventType.MODIFY)
                         .ignoreHidden(true)
+                                .ignoreHidden(true)
+                                .filter(new CompositeFileListFilter(Arrays.asList(
+                                        new RegexPatternFileListFilter("DSP_CUSTINFO.txt"),
+                                        fileListFilter
+                                )))
                         , e -> e.poller(Pollers.fixedDelay(5000).maxMessagesPerPoll(-1)
                         .errorChannel(jobStatusChannel()))
                         .id("fileInboundChannelAdapter"))

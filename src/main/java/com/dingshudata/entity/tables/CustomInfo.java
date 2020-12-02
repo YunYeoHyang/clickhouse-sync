@@ -2,14 +2,13 @@ package com.dingshudata.entity.tables;
 
 import lombok.Data;
 
-import java.util.Date;
 
 /**
  * 客户信息表
  */
 @Data
 public class CustomInfo {
-    private Date acctdt;
+    private String acctdt;
     private String cusname;
     private String cus_id;
     private String idtype;
@@ -28,7 +27,7 @@ public class CustomInfo {
     private int curraccnum;
     private int regaccnum;
     private String vip_cust_gradex;
-    private Date vip_time;
+    private String vip_time;
     private double total_aum;
     private double total_loan;
     private double hqye;
@@ -51,42 +50,42 @@ public class CustomInfo {
     private int is_gzyh;
     private int is_grdkyh;
     private int is_xykyh;
-    private Date open_mindate;
-    private Date dq_open_mindate;
-    private Date webbank_open_date;
-    private Date mobilebank_open_date;
-    private Date credit_c_open_date;
-    private Date lc_open_date;
-    private Date jj_open_date;
-    private Date gz_open_date;
-    private Date bx_open_date;
-    private Date dfgz_date_recent;
+    private String open_minString;
+    private String dq_open_minString;
+    private String webbank_open_String;
+    private String mobilebank_open_String;
+    private String credit_c_open_String;
+    private String lc_open_String;
+    private String jj_open_String;
+    private String gz_open_String;
+    private String bx_open_String;
+    private String dfgz_String_recent;
     private double dfgz_amt_recent;
-    private Date dfsb_date_recent;
+    private String dfsb_String_recent;
     private double dfsb_amt_recent;
-    private Date gdhk_date_recent;
-    private Date etc_open_date;
-    private Date webbank_active_date;
-    private Date mobilebank_active_date;
-    private Date credit_c_activiate_date;
-    private Date debit_c_close_date;
-    private Date dq_close_date;
-    private Date wy_close_date;
-    private Date mobilebank_close_date;
-    private Date credit_c_close_date;
-    private Date dq_due_date_recent;
+    private String gdhk_String_recent;
+    private String etc_open_String;
+    private String webbank_active_String;
+    private String mobilebank_active_String;
+    private String credit_c_activiate_String;
+    private String debit_c_close_String;
+    private String dq_close_String;
+    private String wy_close_String;
+    private String mobilebank_close_String;
+    private String credit_c_close_String;
+    private String dq_due_String_recent;
     private double dq_due_amt_recent;
     private String dq_channel_recent;
-    private Date lc_due_date_recent;
+    private String lc_due_String_recent;
     private double lc_due_amt_recent;
     private String lc_channel_recent;
-    private Date jj_due_date_recent;
+    private String jj_due_String_recent;
     private double jj_due_amt_recent;
     private String jj_channel_recent;
-    private Date gz_due_date_recent;
+    private String gz_due_String_recent;
     private double gz_due_amt_recent;
     private String gz_channel_recent;
-    private Date bx_due_date_recent;
+    private String bx_due_String_recent;
     private double bx_due_amt_recent;
     private String bx_channel_recent;
     private double hq_1m_amt;
