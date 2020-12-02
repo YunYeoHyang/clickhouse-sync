@@ -4,9 +4,12 @@ import com.dingshudata.batch.tables.CreditCardProcessor;
 import com.dingshudata.config.ApplicationProperties;
 import com.dingshudata.config.ClickHouseProperties;
 import com.dingshudata.entity.tables.CreditCard;
+import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.database.support.ColumnMapItemPreparedStatementSetter;
@@ -34,13 +37,26 @@ import java.util.stream.Collectors;
 @Configuration
 public class CreditCardConfig {
 
+    private final JobBuilderFactory jobs;
+
     private final StepBuilderFactory steps;
 
     private final DataSource dateSource;
 
-    public CreditCardConfig(StepBuilderFactory steps, ClickHouseProperties properties) {
+    public CreditCardConfig(JobBuilderFactory jobs , StepBuilderFactory steps, ClickHouseProperties properties) {
+        this.jobs = jobs;
         this.steps = steps;
         this.dateSource = properties.initializeDataSourceBuilder().build();
+    }
+
+    @Bean("creditCardJob")
+    public Job job(
+            @Qualifier("creditCardStep") Step step) {
+        return jobs.get("creditCardJob")
+                .incrementer(new RunIdIncrementer())
+                .flow(step)
+                .end()
+                .build();
     }
 
     @Bean("creditCardStep")
@@ -86,7 +102,7 @@ public class CreditCardConfig {
     @StepScope
     public JdbcBatchItemWriter<Map<String, Object>> writer(ApplicationProperties applicationProperties) {
         List<String> names = Arrays.stream(CreditCard.class.getDeclaredFields()).map(Field::getName).collect(Collectors.toList());
-        String sql = String.format("insert into %s values ( %s )", applicationProperties.getSchema(), names.stream().map(s -> "?").collect(Collectors.joining(",")));
+        String sql = String.format("insert into %s values ( %s )", applicationProperties.getCreditCardSchema(), names.stream().map(s -> "?").collect(Collectors.joining(",")));
         ColumnMapItemPreparedStatementSetter statementSetter = new ColumnMapItemPreparedStatementSetter();
         return new JdbcBatchItemWriterBuilder<Map<String, Object>>()
                 .dataSource(this.dateSource)

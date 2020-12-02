@@ -4,9 +4,12 @@ import com.dingshudata.batch.tables.TransProcessor;
 import com.dingshudata.config.ApplicationProperties;
 import com.dingshudata.config.ClickHouseProperties;
 import com.dingshudata.entity.tables.Trans;
+import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.database.support.ColumnMapItemPreparedStatementSetter;
@@ -34,13 +37,26 @@ import java.util.stream.Collectors;
 @Configuration
 public class TransConfig {
 
+    private final JobBuilderFactory jobs;
+
     private final StepBuilderFactory steps;
 
     private final DataSource dateSource;
 
-    public TransConfig(StepBuilderFactory steps, ClickHouseProperties properties) {
+    public TransConfig(JobBuilderFactory jobs , StepBuilderFactory steps, ClickHouseProperties properties) {
+        this.jobs = jobs;
         this.steps = steps;
         this.dateSource = properties.initializeDataSourceBuilder().build();
+    }
+
+    @Bean("transJob")
+    public Job job(
+            @Qualifier("transStep") Step step) {
+        return jobs.get("transJob")
+                .incrementer(new RunIdIncrementer())
+                .flow(step)
+                .end()
+                .build();
     }
 
     @Bean("transStep")
@@ -86,7 +102,7 @@ public class TransConfig {
     @StepScope
     public JdbcBatchItemWriter<Map<String, Object>> writer(ApplicationProperties applicationProperties) {
         List<String> names = Arrays.stream(Trans.class.getDeclaredFields()).map(Field::getName).collect(Collectors.toList());
-        String sql = String.format("insert into %s values ( %s )", applicationProperties.getSchema(), names.stream().map(s -> "?").collect(Collectors.joining(",")));
+        String sql = String.format("insert into %s values ( %s )", applicationProperties.getTransSchema(), names.stream().map(s -> "?").collect(Collectors.joining(",")));
         ColumnMapItemPreparedStatementSetter statementSetter = new ColumnMapItemPreparedStatementSetter();
         return new JdbcBatchItemWriterBuilder<Map<String, Object>>()
                 .dataSource(this.dateSource)

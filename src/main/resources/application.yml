@@ -4,10 +4,20 @@ application:
     driver-class-name: ru.yandex.clickhouse.ClickHouseDriver
     username: default
     password:
-  input-directory: D:\WorkSpace\clickhouse-sync\src\test\jh_panorama
+  credit-directory: D:\WorkSpace\clickhouse-sync\src\test\jh_panorama\Credit
+  creditCard-directory: D:\WorkSpace\clickhouse-sync\src\test\jh_panorama\CreditCard
+  cardMCC-directory: D:\WorkSpace\clickhouse-sync\src\test\jh_panorama\CardMCC
+  customInfo-directory: D:\WorkSpace\clickhouse-sync\src\test\jh_panorama\CustomInfo
+  financial-directory: D:\WorkSpace\clickhouse-sync\src\test\jh_panorama\Financial
+  trans-directory: D:\WorkSpace\clickhouse-sync\src\test\jh_panorama\Trans
   metadata-dir: D:\WorkSpace\clickhouse-sync\src\test\meta
   delimiter: "~@~"
-  schema: "default.cmcc_test"
+  credit-schema: "jh_panorama.Credit"
+  creditCard-schema: "jh_panorama.CreditCard"
+  cardMCC-schema: "jh_panorama.CardMCC"
+  customInfo-schema: "jh_panorama.CustomInfo"
+  financial-schema: "jh_panorama.Financial"
+  trans-schema: "jh_panorama.Trans"
 spring:
   batch:
     job:

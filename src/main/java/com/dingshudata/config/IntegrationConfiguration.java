@@ -50,7 +50,7 @@ public class IntegrationConfiguration {
         return new JobLaunchingGateway(simpleJobLauncher);
     }
 
-    @Bean
+    @Bean(name = "taskChannel")
     public MessageChannel fileInputChannel() {
         return new DirectChannel();
     }
@@ -63,11 +63,11 @@ public class IntegrationConfiguration {
     }
 
     @Bean
-    public IntegrationFlow fromFile(Job job, JobLaunchingGateway jobLaunchingGateway, ApplicationProperties applicationProperties, PropertiesPersistingMetadataStore metadataStore) {
+    public IntegrationFlow fromFile(@Qualifier("customInfoJob")Job job, JobLaunchingGateway jobLaunchingGateway, ApplicationProperties applicationProperties, PropertiesPersistingMetadataStore metadataStore) {
         FileSystemPersistentAcceptOnceFileListFilter fileListFilter = new FileSystemPersistentAcceptOnceFileListFilter(metadataStore, "");
         fileListFilter.setFlushOnUpdate(true);
         return IntegrationFlows
-                .from(Files.inboundAdapter(new File(applicationProperties.getInputDirectory()))
+                .from(Files.inboundAdapter(new File(applicationProperties.getCustomInfoDirectory()))
                         .useWatchService(true)
                         .watchEvents(FileReadingMessageSource.WatchEventType.CREATE, FileReadingMessageSource.WatchEventType.MODIFY)
                         .ignoreHidden(true)
@@ -76,7 +76,7 @@ public class IntegrationConfiguration {
                         .id("fileInboundChannelAdapter"))
                 .transform((File file) -> {
                     JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
-                    jobParametersBuilder.addString("inputFile", file.toURI().toString());
+                    jobParametersBuilder.addString("customInfoFile", file.toURI().toString());
                     return new JobLaunchRequest(job, jobParametersBuilder.toJobParameters());
                 })
                 .handle(jobLaunchingGateway)
@@ -84,6 +84,23 @@ public class IntegrationConfiguration {
                 .get();
 
     }
+
+//    @Bean
+//    public IntegrationFlow fromFile(@Qualifier("cardMCCJob") Job job, JobLaunchingGateway jobLaunchingGateway, ApplicationProperties applicationProperties, PropertiesPersistingMetadataStore metadataStore) {
+//        FileSystemPersistentAcceptOnceFileListFilter fileListFilter = new FileSystemPersistentAcceptOnceFileListFilter(metadataStore, "");
+//        fileListFilter.setFlushOnUpdate(true);
+//        return IntegrationFlows
+//                .from("taskChannel")
+//                .transform( (ApplicationProperties application ) -> {
+//                    JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
+//                    jobParametersBuilder.addString("cardMCCFile", new File(application.getCardMCCDirectory()).toURI().toString());
+//                    return new JobLaunchRequest(job, jobParametersBuilder.toJobParameters());
+//                })
+//                .handle(jobLaunchingGateway)
+//                .log(LoggingHandler.Level.INFO, "CardMCC Sync Job")
+//                .get();
+//
+//    }
 
     @Bean
     public MessageChannel jobStatusChannel() {
