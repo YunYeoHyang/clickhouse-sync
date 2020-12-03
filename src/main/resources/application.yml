@@ -4,9 +4,9 @@ application:
     driver-class-name: ru.yandex.clickhouse.ClickHouseDriver
     username: default
     password:
-  input-directory: D:\WorkSpace\clickhouse-sync\src\test\jh_panorama\CustomInfo
+  input-directory: D:\WorkSpace\clickhouse-sync\src\test\input
   metadata-dir: D:\WorkSpace\clickhouse-sync\src\test\meta
-  delimiter: ","
+  delimiter: "||"
   schema: "jh_panorama.CustomInfo"
 spring:
   batch:

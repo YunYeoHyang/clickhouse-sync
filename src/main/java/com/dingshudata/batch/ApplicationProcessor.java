@@ -1,6 +1,6 @@
 package com.dingshudata.batch;
 
-import com.dingshudata.entity.tables.CustomInfo;
+import com.dingshudata.entity.Application;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.cglib.beans.BeanMap;
@@ -11,13 +11,13 @@ import java.util.LinkedHashMap;
 
 @StepScope
 @Service
-public class ApplicationProcessor implements ItemProcessor<CustomInfo, LinkedHashMap<String, Object>> {
+public class ApplicationProcessor implements ItemProcessor<Application, LinkedHashMap<String, Object>> {
 
     @Override
-    public LinkedHashMap<String, Object> process(CustomInfo item) {
+    public LinkedHashMap<String, Object> process(Application item) {
         BeanMap m = BeanMap.create(item);
         LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
-        for (Field field : CustomInfo.class.getDeclaredFields()) {
+        for (Field field : Application.class.getDeclaredFields()) {
             String fieldName = field.getName();
             Object value = m.get(field.getName());
             if (value == null) {
