@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 public class ApplicationProperties {
     private String inputDirectory;
     private String metadataDir;
-    private String fileEncoding = "UTF-8";
+    private String fileEncoding;
     private String delimiter;
     private String schema;
 }
