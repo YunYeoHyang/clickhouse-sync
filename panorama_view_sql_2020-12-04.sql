@@ -1,4 +1,4 @@
-create view panorama_view
+create view panorama
 AS
 select CustomInfo.acctdt as acctdt,
        cusname,
