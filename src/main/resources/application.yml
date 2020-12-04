@@ -6,7 +6,7 @@ application:
     password:
   input-directory: D:\WorkSpace\clickhouse-sync\src\test\input
   metadata-dir: D:\WorkSpace\clickhouse-sync\src\test\meta
-  delimiter: "||"
+  delimiter: "~@~"
   schema: "jh_panorama.CustomInfo"
 spring:
   batch:

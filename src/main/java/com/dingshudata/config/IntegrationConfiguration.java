@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
@@ -53,12 +52,7 @@ public class IntegrationConfiguration {
         return new JobLaunchingGateway(simpleJobLauncher);
     }
 
-    @Bean
-    public MessageChannel fileInputChannel() {
-        return new DirectChannel();
-    }
-
-    @Bean
+    @Bean("metadataStore")
     public PropertiesPersistingMetadataStore metadataStore(ApplicationProperties applicationProperties) {
         PropertiesPersistingMetadataStore metadataStore = new PropertiesPersistingMetadataStore();
         metadataStore.setBaseDirectory(applicationProperties.getMetadataDir());
@@ -66,22 +60,22 @@ public class IntegrationConfiguration {
     }
 
     @Bean
-    public IntegrationFlow fromFile(Job job, JobLaunchingGateway jobLaunchingGateway, ApplicationProperties applicationProperties, PropertiesPersistingMetadataStore metadataStore) {
-        FileSystemPersistentAcceptOnceFileListFilter fileListFilter = new FileSystemPersistentAcceptOnceFileListFilter(metadataStore, "");
+    public IntegrationFlow fromFile(Job job, JobLaunchingGateway jobLaunchingGateway, ApplicationProperties applicationProperties, @Qualifier("metadataStore") PropertiesPersistingMetadataStore persistingMetadataStore) {
+        FileSystemPersistentAcceptOnceFileListFilter fileListFilter = new FileSystemPersistentAcceptOnceFileListFilter(persistingMetadataStore, "");
         fileListFilter.setFlushOnUpdate(true);
         return IntegrationFlows
                 .from(Files.inboundAdapter(new File(applicationProperties.getInputDirectory()))
-                        .useWatchService(true)
-                        .watchEvents(FileReadingMessageSource.WatchEventType.CREATE, FileReadingMessageSource.WatchEventType.MODIFY)
-                        .ignoreHidden(true)
+                                .useWatchService(true)
+                                .watchEvents(FileReadingMessageSource.WatchEventType.CREATE, FileReadingMessageSource.WatchEventType.MODIFY)
+                                .ignoreHidden(true)
                                 .ignoreHidden(true)
                                 .filter(new CompositeFileListFilter(Arrays.asList(
                                         new RegexPatternFileListFilter("DSP_CUSTINFO.txt"),
                                         fileListFilter
                                 )))
                         , e -> e.poller(Pollers.fixedDelay(5000).maxMessagesPerPoll(-1)
-                        .errorChannel(jobStatusChannel()))
-                        .id("fileInboundChannelAdapter"))
+                                .errorChannel(jobStatusChannel()))
+                                .id("fileInboundChannelAdapter"))
                 .transform((File file) -> {
                     JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
                     jobParametersBuilder.addString("inputFile", file.toURI().toString());
