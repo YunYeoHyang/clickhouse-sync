@@ -1,14 +1,14 @@
 application:
   clickhouse:
-    url: jdbc:clickhouse://127.0.0.1:8123/jh_panorama
+    url: jdbc:clickhouse://127.0.0.1:8123/default
     driver-class-name: ru.yandex.clickhouse.ClickHouseDriver
     username: default
     password:
-  input-directory: D:\WorkSpace\clickhouse-sync\src\test\jh_panorama\CustomInfo
-  metadata-dir: D:\WorkSpace\clickhouse-sync\src\test\meta
+  input-directory: D:\WorkData\WorkSpace\clickhouse-sync\src\test\input\
+  metadata-dir: D:\WorkData\WorkSpace\clickhouse-sync\src\test\meta
   delimiter: ","
-  schema: "jh_panorama.CustomInfo"
+  schema: "default.cmcc_test"
 spring:
   batch:
     job:
-      enabled: false
+      enabled: true
