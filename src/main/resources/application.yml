@@ -7,7 +7,7 @@ application:
   input-directory: D:\WorkSpace\clickhouse-sync\src\test\simple
   metadata-dir: D:\WorkSpace\clickhouse-sync\src\test\meta
   delimiter: ","
-  input-schema: "jh_panorama.panorama"
+  schema: "jh_panorama.panorama"
   file-encoding: UTF-8
 spring:
   batch:
