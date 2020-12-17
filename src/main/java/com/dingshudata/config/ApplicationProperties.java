@@ -12,19 +12,9 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationPropertiesScan
 @ConfigurationProperties(prefix = "application")
 public class ApplicationProperties {
-    private String creditDirectory;
-    private String creditCardDirectory;
-    private String cardMCCDirectory;
-    private String customInfoDirectory;
-    private String financialDirectory;
-    private String transDirectory;
+    private String inputDirectory;
     private String metadataDir;
-    private String fileEncoding = "UTF-8";
+    private String fileEncoding;
     private String delimiter;
-    private String creditSchema;
-    private String creditCardSchema;
-    private String cardMCCSchema;
-    private String customInfoSchema;
-    private String financialSchema;
-    private String transSchema;
+    private String Schema;
 }
